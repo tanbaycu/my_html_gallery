@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #game-container {
+            text-align: center;
+        }
+        #game-board {
+            width: 400px;
+            height: 400px;
+            border: 2px solid #000;
+            background-color: #fff;
+            display: grid;
+            grid-template: repeat(20, 1fr) / repeat(20, 1fr);
+        }
+        .snake {
+            background-color: #4CAF50;
+            border: 1px solid #45a049;
+        }
+        .food {
+            border-radius: 50%;
+        }
+        .food-normal {
+            background-color: #FF4136;
+        }
+        .food-speed {
+            background-color: #FF851B;
+        }
+        .food-grow {
+            background-color: #2ECC40;
+        }
+        #score, #high-score, #level {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        #start-button, #pause-button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #start-button:hover, #pause-button:hover {
+            background-color: #45a049;
+        }
+        #difficulty {
+            margin-top: 10px;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="game-board"></div>
+        <div id="score">Score: <span id="score-value">0</span></div>
+        <div id="high-score">High Score: <span id="high-score-value">0</span></div>
+        <div id="level">Level: <span id="level-value">1</span></div>
+        <select id="difficulty">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+        <button id="start-button">Start Game</button>
+        <button id="pause-button">Pause</button>
+    </div>
+
+    <script>
+        const gameBoard = document.getElementById('game-board');
+        const scoreElement = document.getElementById('score-value');
+        const highScoreElement = document.getElementById('high-score-value');
+        const levelElement = document.getElementById('level-value');
+        const startButton = document.getElementById('start-button');
+        const pauseButton = document.getElementById('pause-button');
+        const difficultySelect = document.getElementById('difficulty');
+        const gridSize = 20;
+        let snake = [{ x: 10, y: 10 }];
+        let food = {};
+        let direction = 'right';
+        let score = 0;
+        let highScore = 0;
+        let level = 1;
+        let gameLoop;
+        let gameSpeed;
+        let isPaused = false;
+
+        const difficulties = {
+            easy: { initialSpeed: 150, speedIncrease: 2 },
+            medium: { initialSpeed: 100, speedIncrease: 3 },
+            hard: { initialSpeed: 80, speedIncrease: 4 }
+        };
+
+        const foodTypes = [
+            { type: 'normal', color: 'food-normal', probability: 0.7, effect: () => {} },
+            { type: 'speed', color: 'food-speed', probability: 0.2, effect: () => { gameSpeed = Math.max(gameSpeed - 10, 50); } },
+            { type: 'grow', color: 'food-grow', probability: 0.1, effect: () => { growSnake(); growSnake(); } }
+        ];
+
+        function generateFood() {
+            const x = Math.floor(Math.random() * gridSize);
+            const y = Math.floor(Math.random() * gridSize);
+            const foodType = getRandomFoodType();
+            return { x, y, ...foodType };
+        }
+
+        function getRandomFoodType() {
+            const rand = Math.random();
+            let cumulativeProbability = 0;
+            for (const foodType of foodTypes) {
+                cumulativeProbability += foodType.probability;
+                if (rand <= cumulativeProbability) {
+                    return foodType;
+                }
+            }
+            return foodTypes[0]; 
+        }
+
+        function drawGame() {
+            gameBoard.innerHTML = '';
+            drawSnake();
+            drawFood();
+        }
+
+        function drawSnake() {
+            snake.forEach(segment => {
+                const snakeElement = document.createElement('div');
+                snakeElement.className = 'snake';
+                snakeElement.style.gridColumnStart = segment.x + 1;
+                snakeElement.style.gridRowStart = segment.y + 1;
+                gameBoard.appendChild(snakeElement);
+            });
+        }
+
+        function drawFood() {
+            const foodElement = document.createElement('div');
+            foodElement.className = `food ${food.color}`;
+            foodElement.style.gridColumnStart = food.x + 1;
+            foodElement.style.gridRowStart = food.y + 1;
+            gameBoard.appendChild(foodElement);
+        }
+
+        function moveSnake() {
+            const head = { ...snake[0] };
+
+            switch (direction) {
+                case 'up': head.y = (head.y - 1 + gridSize) % gridSize; break;
+                case 'down': head.y = (head.y + 1) % gridSize; break;
+                case 'left': head.x = (head.x - 1 + gridSize) % gridSize; break;
+                case 'right': head.x = (head.x + 1) % gridSize; break;
+            }
+
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                food.effect();
+                food = generateFood();
+                increaseScore();
+                playSound('eat');
+            } else {
+                snake.pop();
+            }
+        }
+
+        function growSnake() {
+            const tail = snake[snake.length - 1];
+            snake.push({ ...tail });
+        }
+
+        function checkCollision() {
+            const head = snake[0];
+            return snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y);
+        }
+
+        function gameOver() {
+            clearInterval(gameLoop);
+            playSound('gameover');
+            alert(`Game Over! Your score: ${score}`);
+            startButton.style.display = 'inline-block';
+            pauseButton.style.display = 'none';
+        }
+
+        function startGame() {
+            snake = [{ x: 10, y: 10 }];
+            food = generateFood();
+            direction = 'right';
+            score = 0;
+            level = 1;
+            scoreElement.textContent = score;
+            levelElement.textContent = level;
+            gameSpeed = difficulties[difficultySelect.value].initialSpeed;
+            startButton.style.display = 'none';
+            pauseButton.style.display = 'inline-block';
+            isPaused = false;
+
+            if (gameLoop) clearInterval(gameLoop);
+            gameLoop = setInterval(gameStep, gameSpeed);
+        }
+
+        function gameStep() {
+            if (!isPaused) {
+                moveSnake();
+                if (checkCollision()) {
+                    gameOver();
+                } else {
+                    drawGame();
+                }
+            }
+        }
+
+        function increaseScore() {
+            score++;
+            scoreElement.textContent = score;
+            if (score > highScore) {
+                highScore = score;
+                highScoreElement.textContent = highScore;
+            }
+            if (score % 10 === 0) {
+                increaseLevel();
+            }
+        }
+
+        function increaseLevel() {
+            level++;
+            levelElement.textContent = level;
+            gameSpeed -= difficulties[difficultySelect.value].speedIncrease;
+            clearInterval(gameLoop);
+            gameLoop = setInterval(gameStep, gameSpeed);
+            playSound('levelup');
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+        }
+
+        function playSound(soundType) {
+            const audio = new Audio(`data:audio/wav;base64,${getSoundData(soundType)}`);
+            audio.play();
+        }
+
+        function getSoundData(soundType) {
+            
+            const sounds = {
+                eat: 'UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU',
+                levelup: 'UklGRptvT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YW',
+                gameover: 'UklGRrNvT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YY'
+            };
+            return sounds[soundType];
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!isPaused) {
+                switch (e.key) {
+                    case 'ArrowUp': if (direction !== 'down') direction = 'up'; break;
+                    case 'ArrowDown': if (direction !== 'up') direction = 'down'; break;
+                    case 'ArrowLeft': if (direction !== 'right') direction = 'left'; break;
+                    case 'ArrowRight': if (direction !== 'left') direction = 'right'; break;
+                }
+            }
+            if (e.key === ' ') {
+                togglePause();
+            }
+        });
+
+        startButton.addEventListener('click', startGame);
+        pauseButton.addEventListener('click', togglePause);
+
+        drawGame();
+    </script>
+</body>
+</html>
+

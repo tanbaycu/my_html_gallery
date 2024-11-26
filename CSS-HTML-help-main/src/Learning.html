@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="lang=en-uk">
+        <title>This is a very good title</title>
+        <link rel="icon" type="image/x-icon" href="icon.png">
+        <!-- * format types that are universal ".ico .png .gif .jpeg .svg"-->
+        <!-- * gets from a doctument to style a page
+            <link rel="stylesheet" href="styles.css">
+        -->
+
+        <!--  *styles the whole page
+        <style>
+            body {background-color: powderblue;}
+            h1 {color: red;}
+            p {color: blue;}
+        </style>
+        -->
+        <!--
+        <head> 	Defines information about the document
+        <title> 	Defines the title of a document
+        <base> 	Defines a default address or a default target for all links on a page
+        <link> 	Defines the relationship between a document and an external resource
+        <meta> 	Defines metadata about an HTML document
+        <script> 	Defines a client-side script
+        <style> 	Defines style information for a document
+        -->
+    </head>
+    <body>
+        <div> <!-- text formating-->
+            <h1>
+                this is a big title
+            </h1>
+            <br>
+            <h6>
+                this is the smallest title
+            </h6>
+            <br>
+            <p>
+                this is a parragraph
+            </p>
+            <br>
+            <strong>
+                this is some strong text
+            </strong>
+            <br>
+            <em>
+                this is some important text
+            </em>
+            <br>
+            <pre>
+                this is some pre-formated text
+            </pre>
+            <br>
+            <b>
+                this is some bold text
+            </b>
+            <br>
+            <i>
+                this is some italic text
+            </i>
+            <br>
+            <mark>
+                this is some marked text
+            </mark>
+            <br>
+            <small>
+                this is some small text
+            </small>
+            <br>
+            <del>
+                this is some deleted text
+            </del>
+            <br>
+            <ins>
+                this is some inserted text
+            </ins>
+            <br>
+            <sub>
+                this is some subscripted text
+            </sub>
+            <br>
+            <sup>
+                this is some superscript text
+            </sup>
+            <br>
+            <p>
+                this is a
+            </p>
+            <br>
+            <hr>
+            <p>
+                break followed by a horozontal line
+            </p>
+            <br>
+            <abbr title="this allows for abbrivated text">
+                hover over me
+            </abbr>
+            <br>
+            <address>
+                Written by John Doe.<br>
+                Visit us at:<br>
+                Example.com<br>
+                Box 564, Disneyland<br>
+                USA
+            </address> 
+            <br>
+            <blockquote cite="http://www.worldwildlife.org/who/index.html">
+                this is a block quote
+            </blockquote>
+            <br>
+            <cite>
+                this is to refrence a work of art
+            </cite> 
+            <br>
+            <bdo dir="rtl">
+                This text will be written from right to left
+            </bdo> 
+            <article>
+                <header>What does WWf Do?</header>
+                <p>
+                    they do shit man.
+                </p>
+            </article>
+            <footer>
+                <p>author: ME</p>
+                <p>
+                    <a href="mailto:emample@email.com">
+                        email
+                    </a>
+                </p>
+            </footer>
+            <!-- nav used for a nav bar with ancor elements in it
+                <nav>
+                    <a></a>
+                </nav>
+            -->
+            <aside>
+                this is some aside text
+            </aside>
+        </div>
+        <hr>
+        <div> <!-- images-->
+            <img src="w3schools.jpg" alt="w3schools.png" usemap="#mappy">
+            <br>
+            <img src="w3schools.png" style="width:400px;height:300px;" onclick="myFunction()">
+            <script>
+                function myFunction() {
+                    alert("you clicked the image!")
+                }
+            </script>
+            <br>
+            <p>
+                the following is a link
+            </p>
+            <a href="https://www.w3schools.com/">
+                <img src="w3schools.jpg">
+            </a>
+            <p>
+                <img src="w3schools.jpg" alt="this is an image">
+                this text will float to the right of the image
+            </p>
+            <map name="mappy">
+                <!--
+                    * types of shapes are rect, circle, defult and poly
+                -->
+                <area shape="rect" coords="33,44,270,350"
+                alt="Computer" href="https://www.w3schools.com">
+                <area shape="circle" coords="337,300,44" href="https://google.com" alt="google">
+            </map>
+            <figure>
+                <picture>
+                    <source media="(min-width: 650px)" srcset="img_food.jpg">
+                    <source media="(min-width: 650px)" srcset="img_car.jpg">
+                </picture>
+                <figcaption>this is an image</figcaption>
+            </figure>
+        </div>
+        <hr>
+        <div> <!-- buttons and inputs-->
+            <button style="outline: 18cm; background-color: red; border-radius: 10%; width: 10%; height: 10%;">
+                This a Button
+            </button>
+            <br>
+            <button onclick="document.location='default.asp'">
+                HTML Tutorial
+            </button> 
+            <br>
+            <input type="text" placeholder="this is a place holder for text">
+            <br>
+            <input type="number" placeholder="this is a placeholder for a number">
+            <br>
+            <input type="password" placeholder="a placeholder for a password">
+            <br>
+            <form action="">
+                <!-- 
+                    feild and elements go here example:
+                    <input>
+                    <label>
+                    <select>
+                    <textarea>
+                    <button>
+                    <fieldset>
+                    <legend>
+                    <datalist>
+                    <output>
+                    <option>
+                    <optgroup>
+                -->
+                <input type="radio" placeholder="penis" value="reset">
+                <input type="number" placeholder="your number" value="reset" maxlength="11">
+                <input type="reset" value="reset">
+            </form>
+        </div>
+        <hr>
+        <div> <!-- links-->
+            <a href="https://www.w3schools.com/" target="_blank" id="top link">
+                this opens in a new window/tab
+            </a> 
+            <br>
+            <a href="https://www.w3schools.com/" target="_parent">
+                this opens the link replacing the URL
+            </a>
+            <br>
+            <a href="https://www.w3schools.com/" target="_self">
+                this opens in this tab
+            </a>
+            <br>
+            <a href="https://www.w3schools.com/" target="_top">
+                this opens full body of the window
+            </a>
+            <br>
+            <a href="mailto:someone@example.com">
+                Send email
+            </a> 
+            <br>
+            <a href="#top link">
+                to got the top most link
+            </a>
+        </div>
+        <!-- comments
+            TODO: this is a comment
+            ! this is also multi-line
+            * this is still in a comment
+            ? i'm still trying all the bells and whisltess
+        -->
+        <hr>
+        <div> <!-- styleing-->
+            <p style="color: red;">
+                this is some red text
+            </p>
+            <p style="color: hsla(0, 100%, 50%, 0.5)">
+                this is some more red text
+            </p>
+            <p style="font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;">
+                this is in a diffrent font
+            </p>
+            <p style="font-size: large;">
+                this is some big text
+            </p>
+            <p style="border: 3cm;">
+                this is some text with a boarder
+            </p>
+            <p style="padding: 30%;">
+                this is some text with padding
+            </p>
+            <p style="margin: 5cm;">
+                this is some text with a margin
+            </p>
+        </div>
+        <hr>
+        <div> <!-- tables-->
+            <table style="border: 1px solid black; border-collapse: collapse; width: 100%;">
+                <!--
+                    *types of borders:
+                    *dotted, dashed, solid, double, groovem ridgem inset, none, hidden
+                -->
+                <caption>this is a very good caption</caption>
+                <tr>
+                    <th style="width: 70%;">Company</th>
+                    <th style="width: 20%;">Contact</th>
+                    <th style="width: 10%;">Country</th>
+                </tr>
+                <tr style="height: 200px;">
+                    <td colspan="2">Alfreds Futterkiste</td>
+                    <td>Germany</td>
+                </tr>
+                <tr>
+                    <td>Centro comercial Moctezuma</td>
+                    <td>Francisco Chang</td>
+                    <td>Mexico</td>
+                </tr>
+            </table>
+            <!--
+                colgroup, specifies one or more coloumns for formating
+                col, specifies a column with in a colgroup
+                thead groups a header together, tbody groupthe body of a table, tfoot groups the foot of a table
+            -->
+        </div>
+        <hr>
+        <div> <!-- lists-->
+            <ul style="list-style-type: disc;">
+                <li>item 1</li>
+                <li>item 2</li>
+                <li>item 3</li>
+            </ul>
+            <br>
+            <ol type="1"> <!-- type = 1: from 1 onwards, A: with upper case letters,
+                            a: lower case letter, I: upper case roman numbers, i: lower case roman numbers-->
+                <li>coffee</li>
+                <li>tea</li>
+                <li>water</li>
+                <li>hot chocolate</li>
+                <ol>
+                    <li>powder</li>
+                    <li>milk</li>
+                    <li>water</li>
+                </ol>
+            </ol>
+            <br>
+            <dl>
+                <dt>coffee</dt>
+                <dd>a creamey blend of milk and freshly ground coffee beans</dd>
+                <dt>tea</dt>
+                <dd>from the wide range of the chinese land scape our finsiest hand pick builders tea</dd>
+            </dl>
+        </div>
+        <hr>
+        <div> <!-- block elements-->
+            <div style="background-color: blue;">hello div</div> <!-- this is a section-->
+            <span style="background-color: yellow;">Hello span</span> <!-- this is a line-->
+            <!-- list of block elements
+            <address>
+            <article>
+            <aside>
+            <blockquote>
+            <canvas>
+            <dd>
+            <div>
+            <dl>
+            <dt>
+            <fieldset>
+            <figcaption>
+            <figure>
+            <footer>
+            <form>
+            <h1>-<h6>
+            <header>
+            <hr>
+            <li>
+            <main>
+            <nav>
+            <noscript>
+            <ol>
+            <p>
+            <pre>
+            <section>
+            <table>
+            <tfoot>
+            <ul>
+            <video>
+            -->
+            <!-- list of inline elements
+            <a>
+            <abbr>
+            <acronym>
+            <b>
+            <bdo>
+            <big>
+            <br>
+            <button>
+            <cite>
+            <code>
+            <dfn>
+            <em>
+            <i>
+            <img>
+            <input>
+            <kbd>
+            <label>
+            <map>
+            <object>
+            <output>
+            <q>
+            <samp>
+            <script>
+            <select>
+            <small>
+            <span>
+            <strong>
+            <sub>
+            <sup>
+            <textarea>
+            <time>
+            <tt>
+            <var>
+            -->
+        </div>
+        <hr>
+        <div> <!-- classes and ID-->
+            <style>
+            .city {
+                background-color: purple;
+                color: white;
+                border: 3px solid;
+                margin: 20px;
+                padding: 20px;
+            }
+            #special {
+                color: blue;
+                text-shadow: 3px red;
+            }
+            </style>
+            <div class="city">
+                <h2>London</h2>
+                <p>London is the capital city of the UK.</p>
+            </div>
+            <p id="special">Hello ID</p>
+        </div>
+        <hr>
+        <div> <!-- iframes-->
+            <iframe src="hello world.html" height="200" width="400" title="example"></iframe>
+        </div>
+        <hr>
+        <div> <!-- layouts-->
+            <!--
+            <header> - Defines a header for a document or a section
+            <nav> - Defines a set of navigation links
+            <section> - Defines a section in a document
+            <article> - Defines an independent, self-contained content
+            <aside> - Defines content aside from the content (like a sidebar)
+            <footer> - Defines a footer for a document or a section
+            <details> - Defines additional details that the user can open and close on demand
+            <summary> - Defines a heading for the <details> element
+            -->
+        </div>
+        <hr>
+        <div> <!-- responsive layouts-->
+            <style>
+                .left, .right {
+                    float: left;
+                    width: 20%; /* The width is 20%, by default */
+                }
+                
+                .main {
+                    float: left;
+                    width: 60%; /* The width is 60%, by default */
+                }
+                
+                /* Use a media query to add a breakpoint at 800px: */
+                @media screen and (max-width: 800px) {
+                    .left, .main, .right {
+                    width: 100%; /* The width is 100%, when the viewport is 800px or smaller */
+                }
+                }
+                </style> 
+            <img src="w3schools.jpg" style="max-width: 100%; height: auto;">
+            <h1 style="font-size: 10vw;">Hello World</h1>
+        </div>
+        <hr>
+        <div> <!-- coding-->
+            <code>
+                x = 5;
+                y = 6;
+                z = x + y;
+            </code>
+            <kbd onkeydown="if (event.ctrlKey && event.key === ';') { alert('You did a thing!'); }">Ctrl + ;</kbd>
+            <p>The area of a triangle is: 1/2 x <var>b</var> x <var>h</var>, where <var>b</var> is the base, and <var>h</var> is the vertical height.</p> 
+        </div>
+    </body>
+</html>

@@ -1,0 +1,55 @@
+/* author: https://codepen.io/khanhtranngoccva/pen/gOEONOg
+Khanh Tran */
+html, body, iframe {
+    width: 100%;
+    height: 100%;
+  }
+  
+  body {
+    overflow: hidden;
+    margin: 0;
+    background: #2C133B;
+  }
+  
+  iframe {
+    border: none;
+  }
+  
+  .container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .source-code {
+    display: flex;
+    background-color: white;
+    position: fixed;
+    font-weight: 600;
+    z-index: 4;
+    bottom: 1rem;
+    align-items: center;
+    gap: 1ch;
+    right: 1rem;
+    text-decoration: none;
+    color: black;
+    font-family: "Inter", system-ui;
+    border-radius: 8px;
+    padding: 1rem 2ch;
+    transition: background-color 0.15s ease-in-out;
+  }
+  
+  .source-code:focus-visible, .source-code:hover {
+    background-color: #eee;
+  }
+  
+  .icon {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .loading-placeholder {
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }

@@ -1,0 +1,38 @@
+[
+  {
+    "role": "user",
+    "content": "Hi"
+  },
+  {
+    "role": "assistant",
+    "content": "Hey! 👋  Tớ đây, Loki!  Chuyện gì thế nào?  ✨\n"
+  },
+  {
+    "role": "user",
+    "content": "Hilo"
+  },
+  {
+    "role": "assistant",
+    "content": "Loki đây!  ✨  Hilo!  Chuyện gì vui vậy nào?  😁\n"
+  },
+  {
+    "role": "user",
+    "content": "Hay hay hi"
+  },
+  {
+    "role": "assistant",
+    "content": "Loki đây!  ✨  Hay thế, có chuyện gì vui muốn kể không nào?  😁  Chuyện gì mà \"hay hay hi\" thế nhỉ? 🤔\n"
+  },
+  {
+    "role": "user",
+    "content": "Con cặc?"
+  },
+  {
+    "role": "assistant",
+    "content": "Ôi trời ơi, câu hỏi gì thế Loki! 😅  Đùa thôi, đừng hỏi như vậy nhé!  😉  Có chuyện gì cần giúp không? 😊\n"
+  },
+  {
+    "role": "user",
+    "content": "Hi"
+  }
+]

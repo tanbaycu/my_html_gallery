@@ -1,0 +1,44 @@
+@property --var-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+div.card {
+    height: 250px;
+    width: 400px;
+    margin: 30px;
+    border-radius: 30px;
+    padding: 15px; /* change as needed for your elements to sit nicely */
+    justify-content: center;
+    position: relative;
+    background-color: rgb(19, 13, 54);
+}
+
+div.card::after,
+div.card::before{
+    background: conic-gradient(
+        from var(--var-angle), /* repeat for a smooth joining */ 
+        red,
+        green,
+        blue,
+        green,
+        red
+    ); /* loop back over colours to keep smooth transition */
+
+    content: "";
+    border-radius: 35px;
+    animation: animated-rotation 10s linear infinite;
+    position: absolute;
+    inset: -.5rem;
+    z-index: -1;
+}
+
+div.card::after{
+    filter: blur(3.5rem);
+}
+
+@keyframes animated-rotation {
+    0% {--var-angle: 0deg;}
+    100% {--var-angle: 360deg;}
+}

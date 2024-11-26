@@ -1,0 +1,34 @@
+div.card {
+    height: 250px;
+    width: 400px;
+    margin: 30px;
+    border-radius: 30px;
+    padding: 10px; /* change as needed for your elements to sit nicely */
+    justify-content: center;
+    position: relative;
+    background-color: rgb(19, 13, 54);
+}
+
+div.card::after{
+    background: linear-gradient(
+        to right,
+        red,
+        green,
+        blue,
+        green,
+        red
+    ); /* have the colours loop over to the begging */
+
+    content: "";
+    border-radius: 35px;
+    animation: animated 10s linear infinite;
+    position: absolute;
+    inset: -.5rem;
+    z-index: -1;
+}
+
+@keyframes animated {
+    to {
+        background-position-x: 420px; /* the width + margin and padding */
+    }
+}

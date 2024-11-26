@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phân tích Hình ảnh Chuyên sâu AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(var(--destructive))",
+                            foreground: "hsl(var(--destructive-foreground))",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))",
+                        },
+                        popover: {
+                            DEFAULT: "hsl(var(--popover))",
+                            foreground: "hsl(var(--popover-foreground))",
+                        },
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                },
+            },
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --background: 0 0% 100%;
+                --foreground: 222.2 84% 4.9%;
+                --card: 0 0% 100%;
+                --card-foreground: 222.2 84% 4.9%;
+                --popover: 0 0% 100%;
+                --popover-foreground: 222.2 84% 4.9%;
+                --primary: 221.2 83.2% 53.3%;
+                --primary-foreground: 210 40% 98%;
+                --secondary: 210 40% 96.1%;
+                --secondary-foreground: 222.2 47.4% 11.2%;
+                --muted: 210 40% 96.1%;
+                --muted-foreground: 215.4 16.3% 46.9%;
+                --accent: 210 40% 96.1%;
+                --accent-foreground: 222.2 47.4% 11.2%;
+                --destructive: 0 84.2% 60.2%;
+                --destructive-foreground: 210 40% 98%;
+                --border: 214.3 31.8% 91.4%;
+                --input: 214.3 31.8% 91.4%;
+                --ring: 221.2 83.2% 53.3%;
+                --radius: 0.5rem;
+            }
+            .dark {
+                --background: 222.2 84% 4.9%;
+                --foreground: 210 40% 98%;
+                --card: 222.2 84% 4.9%;
+                --card-foreground: 210 40% 98%;
+                --popover: 222.2 84% 4.9%;
+                --popover-foreground: 210 40% 98%;
+                --primary: 217.2 91.2% 59.8%;
+                --primary-foreground: 222.2 47.4% 11.2%;
+                --secondary: 217.2 32.6% 17.5%;
+                --secondary-foreground: 210 40% 98%;
+                --muted: 217.2 32.6% 17.5%;
+                --muted-foreground: 215 20.2% 65.1%;
+                --accent: 217.2 32.6% 17.5%;
+                --accent-foreground: 210 40% 98%;
+                --destructive: 0 62.8% 30.6%;
+                --destructive-foreground: 210 40% 98%;
+                --border: 217.2 32.6% 17.5%;
+                --input: 217.2 32.6% 17.5%;
+                --ring: 224.3 76.3% 48%;
+            }
+        }
+        @layer base {
+            * {
+                @apply border-border;
+            }
+            body {
+                @apply bg-background text-foreground;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-background font-sans antialiased">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8">
+            <h1 class="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-600">Phân tích Hình ảnh Chuyên sâu AI</h1>
+        </header>
+        
+        <main class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <section class="space-y-6">
+                <div class="bg-card text-card-foreground rounded-lg shadow-lg p-6">
+                    <h2 class="text-2xl font-semibold mb-4">Tải lên và Cấu hình</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label for="imageUpload" class="block text-sm font-medium mb-2">Tải lên hình ảnh:</label>
+                            <div class="flex items-center justify-center w-full">
+                                <label for="imageUpload" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-secondary/50 transition-colors duration-200">
+                                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <i data-lucide="upload-cloud" class="w-8 h-8 mb-3 text-primary"></i>
+                                        <p class="mb-2 text-sm"><span class="font-semibold">Nhấp để tải lên</span> hoặc kéo và thả</p>
+                                        <p class="text-xs text-muted-foreground">PNG, JPG hoặc GIF (Tối đa 10MB)</p>
+                                    </div>
+                                    <input id="imageUpload" type="file" class="hidden" accept="image/*" />
+                                </label>
+                            </div>
+                        </div>
+                        <div id="imagePreview" class="hidden">
+                            <img id="previewImage" src="" alt="Xem trước" class="max-w-full h-auto rounded-lg shadow-md">
+                        </div>
+                        <div>
+                            <label for="promptInput" class="block text-sm font-medium mb-2">Nhập prompt mô tả hình ảnh:</label>
+                            <textarea id="promptInput" rows="3" class="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-shadow duration-200" placeholder="Mô tả chi tiết về hình ảnh hoặc đặt câu hỏi cụ thể..."></textarea>
+                        </div>
+                        <div>
+                            <label for="analysisType" class="block text-sm font-medium mb-2">Loại phân tích:</label>
+                            <select id="analysisType" class="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-shadow duration-200">
+                                <option value="general">Phân tích tổng quát</option>
+                                <option value="objects">Nhận diện đối tượng</option>
+                                <option value="text">Nhận diện văn bản</option>
+                                <option value="faces">Nhận diện khuôn mặt</option>
+                                <option value="colors">Phân tích màu sắc</option>
+                                <option value="composition">Phân tích bố cục</option>
+                                <option value="emotion">Phân tích cảm xúc</option>
+                                <option value="style">Phân tích phong cách nghệ thuật</option>
+                                <option value="context">Phân tích ngữ cảnh</option>
+                                <option value="symbolism">Phân tích biểu tượng</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="detailLevel" class="block text-sm font-medium mb-2">Mức độ chi tiết:</label>
+                            <input type="range" id="detailLevel" min="1" max="5" value="3" class="w-full accent-primary">
+                            <div class="flex justify-between text-xs text-muted-foreground">
+                                <span>Cơ bản</span>
+                                <span>Chi tiết</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="languageStyle" class="block text-sm font-medium mb-2">Phong cách ngôn ngữ:</label>
+                            <select id="languageStyle" class="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-shadow duration-200">
+                                <option value="academic">Học thuật</option>
+                                <option value="conversational">Đàm thoại</option>
+                                <option value="technical">Kỹ thuật</option>
+                                <option value="creative">Sáng tạo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="outputFormat" class="block text-sm font-medium mb-2">Định dạng kết quả:</label>
+                            <select id="outputFormat" class="w-full px-3 py-2 bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary transition-shadow duration-200">
+                                <option value="paragraph">Đoạn văn</option>
+                                <option value="bullet">Danh sách gạch đầu dòng</option>
+                                <option value="table">Bảng</option>
+                                <option value="json">JSON</option>
+                            </select>
+                        </div>
+                        <button id="analyzeButton" class="w-full flex items-center justify-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors duration-200">
+                            <i data-lucide="search" class="w-5 h-5 mr-2"></i>
+                            Phân tích Hình ảnh
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="space-y-6">
+                <div class="bg-card text-card-foreground rounded-lg shadow-lg p-6">
+                    <h2 class="text-2xl font-semibold mb-4">Kết quả Phân tích</h2>
+                    <div id="result" class="prose prose-sm dark:prose-invert max-w-none">
+                        <p class="text-muted-foreground">Kết quả phân tích sẽ hiển thị ở đây...</p>
+                    </div>
+                </div>
+                <div id="visualizations" class="bg-card text-card-foreground rounded-lg shadow-lg p-6 hidden">
+                    <h2 class="text-2xl font-semibold mb-4">Trực quan hóa</h2>
+                    <div id="visualizationContent" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Nội dung trực quan hóa sẽ được thêm vào đây bằng JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        
+        const API_KEY = 'AIzaSyBQZMlCQTsaRcGMtBufDmJey6L6R6cV2SA';
+        const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-002:generateContent';
+
+        document.getElementById('imageUpload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('imagePreview').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('analyzeButton').addEventListener('click', async function() {
+            const imageInput = document.getElementById('imageUpload');
+            const promptInput = document.getElementById('promptInput');
+            const analysisType = document.getElementById('analysisType').value;
+            const detailLevel = document.getElementById('detailLevel').value;
+            const languageStyle = document.getElementById('languageStyle').value;
+            const outputFormat = document.getElementById('outputFormat').value;
+            const resultElement = document.getElementById('result');
+            const visualizationsElement = document.getElementById('visualizations');
+            const visualizationContentElement = document.getElementById('visualizationContent');
+
+            if (!imageInput.files[0]) {
+                alert('Vui lòng tải lên hình ảnh trước khi phân tích.');
+                return;
+            }
+
+            resultElement.innerHTML = "<p class='text-primary'>Đang xử lý, vui lòng đợi...</p>";
+            visualizationsElement.classList.add('hidden');
+
+            try {
+                const imageBase64 = await getBase64(imageInput.files[0]);
+                const prompt = generatePrompt(promptInput.value, analysisType, detailLevel, languageStyle, outputFormat);
+                const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [
+                                {text: prompt},
+                                {
+                                    inline_data: {
+                                        mime_type: imageInput.files[0].type,
+                                        data: imageBase64
+                                    }
+                                }
+                            ]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Lỗi kết nối mạng');
+                }
+
+                const data = await response.json();
+                const analysisResult = data.candidates[0].content.parts[0].text;
+                displayAnalysisResult(analysisResult, resultElement, outputFormat);
+
+                // Xử lý trực quan hóa
+                const visualizations = generateVisualizations(analysisType, analysisResult);
+                if (visualizations) {
+                    visualizationContentElement.innerHTML = visualizations;
+                    visualizationsElement.classList.remove('hidden');
+                } else {
+                    visualizationsElement.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('Lỗi:', error);
+                resultElement.innerHTML = `<p class="text-destructive">Lỗi: ${error.message}</p>`;
+            }
+        });
+
+        function getBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function generatePrompt(userPrompt, analysisType, detailLevel, languageStyle, outputFormat) {
+            let basePrompt = "Bạn là một chuyên gia phân tích hình ảnh có kinh nghiệm. Hãy phân tích hình ảnh sau đây và cung cấp thông tin chi tiết. ";
+            
+            basePrompt += "QUAN TRỌNG: Phản hồi của bạn PHẢI HOÀN TOÀN bằng tiếng Việt. KHÔNG sử dụng bất kỳ từ tiếng Anh nào trong phân tích của bạn. ";
+            
+            switch (analysisType) {
+                case 'objects':
+                    basePrompt += "Tập trung vào việc nhận diện và mô tả chi tiết các đối tượng chính trong hình. Liệt kê các đối tượng và mô tả vị trí, kích thước, màu sắc của chúng. Phân tích mối quan hệ giữa các đối tượng nếu có.";
+                    break;
+                case 'text':
+                    basePrompt += "Nhận diện và trích xuất mọi văn bản xuất hiện trong hình ảnh. Nếu có, hãy phân tích nội dung văn bản đó, bao gồm ngôn ngữ, phong cách, và ý nghĩa trong ngữ cảnh của hình ảnh.";
+                    break;
+                case 'faces':
+                    basePrompt += "Tập trung vào việc nhận diện và mô tả các khuôn mặt trong hình. Phân tích biểu cảm, đặc điểm nổi bật, và ước tính độ tuổi nếu có thể. Nếu có nhiều khuôn mặt, hãy mô tả mối quan hệ có thể có giữa họ.";
+                    break;
+                case 'colors':
+                    basePrompt += "Phân tích bảng màu của hình ảnh. Xác định màu sắc chủ đạo và mô tả cách chúng tương tác với nhau. Giải thích ý nghĩa và cảm xúc mà bảng màu này có thể truyền tải.";
+                    break;
+                case 'composition':
+                    basePrompt += "Phân tích bố cục và cấu trúc của hình ảnh. Mô tả cách các yếu tố được sắp xếp và tác động của chúng đến tổng thể bức ảnh. Xác định các nguyên tắc thiết kế được sử dụng và hiệu quả của chúng.";
+                    break;
+                case 'emotion':
+                    basePrompt += "Phân tích cảm xúc và tâm trạng mà hình ảnh truyền tải. Xác định các yếu tố cụ thể trong hình ảnh góp phần tạo nên cảm xúc đó và giải thích tại sao.";
+                    break;
+                case 'style':
+                    basePrompt += "Phân tích phong cách nghệ thuật của hình ảnh. Xác định các kỹ thuật, phong cách, hoặc trường phái nghệ thuật có thể được áp dụng. So sánh với các tác phẩm nghệ thuật nổi tiếng nếu có thể.";
+                    break;
+                case 'context':
+                    basePrompt += "Phân tích ngữ cảnh của hình ảnh. Xác định thời gian, địa điểm, và bối cảnh văn hóa hoặc lịch sử có thể liên quan. Giải thích ý nghĩa của hình ảnh trong bối cảnh rộng hơn.";
+                    break;
+                case 'symbolism':
+                    basePrompt += "Phân tích các biểu tượng và ẩn dụ trong hình ảnh. Xác định các yếu tố có thể mang ý nghĩa biểu tượng và giải thích ý nghĩa sâu xa của chúng trong ngữ cảnh của hình ảnh.";
+                    break;
+                default:
+                    basePrompt += "Cung cấp một phân tích tổng quát về nội dung, ý nghĩa và bối cảnh của hình ảnh. Bao gồm các yếu tố như đối tượng, màu sắc, bố cục, và ý nghĩa tổng thể.";
+            }
+
+            basePrompt += `Mức độ chi tiết yêu cầu: ${detailLevel}/5. Hãy điều chỉnh độ sâu và phạm vi của phân tích theo mức độ này. `;
+
+            switch (languageStyle) {
+                case 'academic':
+                    basePrompt += "Sử dụng ngôn ngữ học thuật và chính thức trong phân tích của bạn. ";
+                    break;
+                case 'conversational':
+                    basePrompt += "Sử dụng ngôn ngữ đàm thoại và dễ hiểu trong phân tích của bạn. ";
+                    break;
+                case 'technical':
+                    basePrompt += "Sử dụng ngôn ngữ kỹ thuật và chuyên ngành trong phân tích của bạn. ";
+                    break;
+                case 'creative':
+                    basePrompt += "Sử dụng ngôn ngữ sáng tạo và hình tượng trong phân tích của bạn. ";
+                    break;
+            }
+
+            switch (outputFormat) {
+                case 'paragraph':
+                    basePrompt += "Trình bày kết quả dưới dạng các đoạn văn có cấu trúc. ";
+                    break;
+                case 'bullet':
+                    basePrompt += "Trình bày kết quả dưới dạng danh sách gạch đầu dòng. ";
+                    break;
+                case 'table':
+                    basePrompt += "Trình bày kết quả dưới dạng bảng Markdown nếu có thể. ";
+                    break;
+                case 'json':
+                    basePrompt += "Trình bày kết quả dưới dạng chuỗi JSON hợp lệ. ";
+                    break;
+            }
+
+            if (userPrompt) {
+                basePrompt += `Ngoài ra, hãy trả lời câu hỏi sau của người dùng: ${userPrompt}. Đảm bảo câu trả lời của bạn liên quan trực tiếp đến hình ảnh và phân tích của bạn.`;
+            }
+
+            return basePrompt;
+        }
+
+        function displayAnalysisResult(analysisText, resultElement, outputFormat) {
+            let formattedAnalysis = analysisText;
+
+            if (outputFormat === 'json') {
+                try {
+                    const jsonObj = JSON.parse(analysisText);
+                    formattedAnalysis = JSON.stringify(jsonObj, null, 2);
+                    formattedAnalysis = '<pre><code>' + formattedAnalysis + '</code></pre>';
+                } catch (e) {
+                    console.error('Lỗi khi phân tích JSON:', e);
+                }
+            } else {
+                formattedAnalysis = marked.parse(analysisText);
+            }
+
+            resultElement.innerHTML = formattedAnalysis;
+        }
+
+        function generateVisualizations(analysisType, analysisResult) {
+            let visualizations = '';
+
+            switch (analysisType) {
+                case 'colors':
+                    visualizations += generateColorPalette(analysisResult);
+                    break;
+                case 'objects':
+                    visualizations += generateObjectDistribution(analysisResult);
+                    break;
+                case 'emotion':
+                    visualizations += generateEmotionChart(analysisResult);
+                    break;
+                // Thêm các loại trực quan hóa khác tùy theo loại phân tích
+            }
+
+            return visualizations;
+        }
+
+        function generateColorPalette(analysisResult) {
+            // Giả định: Chúng ta trích xuất các màu từ kết quả phân tích
+            const colors = extractColorsFromAnalysis(analysisResult);
+            let html = '<div class="color-palette flex space-x-2">';
+            colors.forEach(color => {
+                html += `<div class="w-12 h-12 rounded" style="background-color: ${color};"></div>`;
+            });
+            html += '</div>';
+            return html;
+        }
+
+        function generateObjectDistribution(analysisResult) {
+            // Giả định: Chúng ta trích xuất các đối tượng và số lượng từ kết quả phân tích
+            const objects = extractObjectsFromAnalysis(analysisResult);
+            let html = '<div class="object-distribution">';
+            html += '<canvas id="objectChart"></canvas>';
+            html += '</div>';
+            
+            // Sử dụng Chart.js để tạo biểu đồ
+            setTimeout(() => {
+                const ctx = document.getElementById('objectChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(objects),
+                        datasets: [{
+                            label: 'Số lượng đối tượng',
+                            data: Object.values(objects),
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }, 0);
+
+            return html;
+        }
+
+        function generateEmotionChart(analysisResult) {
+            // Giả định: Chúng ta trích xuất các cảm xúc và cường độ từ kết quả phân tích
+            const emotions = extractEmotionsFromAnalysis(analysisResult);
+            let html = '<div class="emotion-chart">';
+            html += '<canvas id="emotionChart"></canvas>';
+            html += '</div>';
+            
+            // Sử dụng Chart.js để tạo biểu đồ
+            setTimeout(() => {
+                const ctx = document.getElementById('emotionChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: Object.keys(emotions),
+                        datasets: [{
+                            label: 'Cường độ cảm xúc',
+                            data: Object.values(emotions),
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scale: {
+                            ticks: {
+                                beginAtZero: true,
+                                max: 5
+                            }
+                        }
+                    }
+                });
+            }, 0);
+
+            return html;
+        }
+
+        // Hàm trích xuất dữ liệu từ kết quả phân tích (cần được triển khai)
+        function extractColorsFromAnalysis(analysisResult) {
+            // Triển khai logic để trích xuất màu sắc từ kết quả phân tích
+            return ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F3'];
+        }
+
+        function extractObjectsFromAnalysis(analysisResult) {
+            // Triển khai logic để trích xuất đối tượng và số lượng từ kết quả phân tích
+            return {'Người': 3, 'Cây': 2, 'Xe': 1, 'Tòa nhà': 4};
+        }
+
+        function extractEmotionsFromAnalysis(analysisResult) {
+            // Triển khai logic để trích xuất cảm xúc và cường độ từ kết quả phân tích
+            return {'Hạnh phúc': 4, 'Buồn': 1, 'Tức giận': 2, 'Ngạc nhiên': 3, 'Sợ hãi': 1};
+        }
+    </script>
+</body>
+</html>

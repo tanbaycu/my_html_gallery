@@ -1,0 +1,13 @@
+body {
+    background-color: black;
+}
+
+.cut-out-text {
+    background-image: url("../assets/o7wqo7o4.bmp");
+    background-size: cover;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    size: 1000px;
+    font-weight: 900;
+}

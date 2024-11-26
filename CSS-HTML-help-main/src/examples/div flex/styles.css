@@ -1,0 +1,29 @@
+body {
+    background-color: #121212;
+}
+
+.container {
+    border: 3px solid white;
+    padding: 10px;
+}
+
+#element-1,
+#element-2,
+#element-3,
+#element-4 {
+    height: 100px;
+    width: 100px;
+}
+
+#element-1 {
+    background-color: red;
+}
+#element-2 {
+    background-color: yellow;
+}
+#element-3 {
+    background-color: green;
+}
+#element-4 {
+    background-color: blue;
+}

@@ -1,0 +1,18 @@
+.gallery {
+    animation: scroll 10s linear repeat;
+    justify-content: right;
+    max-height: 100vh;
+    max-width: fit-content;
+}
+@keyframes scroll {
+    0%, 20% {margin-left: 0%;}
+    25%, 45% {margin-left: -100%;}
+    50%, 70% {margin-left: -200%;}
+    75%, 100% {margin-left: -300%;}
+}
+.gallery img{
+    width: 100vw;
+    margin: none;
+    border: none;
+    padding: none;
+}

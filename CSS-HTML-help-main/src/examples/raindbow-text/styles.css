@@ -1,0 +1,12 @@
+h1#ARtext {
+    background: linear-gradient( to left, violet, indigo, blue, green, yellow, orange, red);
+    background-clip: text;
+    color: transparent;
+    display: inline;
+    animation: animated 5s linear infinite;
+}
+@keyframes animated {
+    to {
+        background-position-x: 161px; /* width of the image/text, or put 100vw for whole page stuff. */
+    }
+}   

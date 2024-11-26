@@ -1,0 +1,37 @@
+body {
+  background-color: #000a1f;
+}
+
+.gallery {
+  margin: 200px 0 0 200px;
+  width: 70%;
+  height: 450px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.gallery img {
+  width: 10%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.684);
+  transition: all ease-in-out 0.2s;
+}
+
+.gallery img:nth-child(odd) {
+  translate: 0 -20px;
+}
+.gallery img:nth-child(even) {
+  translate: 0 20px;
+}
+
+.gallery img:not(:hover) {
+  filter: grayscale(100%) blur();
+}
+.gallery img:hover {
+  width: 25%;
+  border: 4px solid #8d0f0b ;
+}
+

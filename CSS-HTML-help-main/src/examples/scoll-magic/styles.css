@@ -1,0 +1,11 @@
+.img-box img {
+    animation: fadeOut 0.5s forwards;
+    animation-delay: 1s; /* Adjust the delay as needed */
+    scroll-timeline: scroll-root; /* Trigger the animation on the root scroll container */
+}
+  
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+    }
+}

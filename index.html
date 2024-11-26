@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Console - tanbaycu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@400;600&display=swap');
+
+        :root {
+            --primary: #00ff00;
+            --secondary: #0000ff;
+            --background: #000000;
+            --text: #ffffff;
+        }
+
+        body {
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Fira Code', monospace;
+        }
+
+        body.light {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --background: #ecf0f1;
+            --text: #2c3e50;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes glitch {
+            0% {
+                text-shadow: 0.05em 0 0 #00fffc, -0.05em -0.025em 0 #fc00ff,
+                    0.025em 0.05em 0 #fffc00;
+            }
+            14% {
+                text-shadow: 0.05em 0 0 #00fffc, -0.05em -0.025em 0 #fc00ff,
+                    0.025em 0.05em 0 #fffc00;
+            }
+            15% {
+                text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.025em 0 #fc00ff,
+                    -0.05em -0.05em 0 #fffc00;
+            }
+            49% {
+                text-shadow: -0.05em -0.025em 0 #00fffc, 0.025em 0.025em 0 #fc00ff,
+                    -0.05em -0.05em 0 #fffc00;
+            }
+            50% {
+                text-shadow: 0.025em 0.05em 0 #00fffc, 0.05em 0 0 #fc00ff,
+                    0 -0.05em 0 #fffc00;
+            }
+            99% {
+                text-shadow: 0.025em 0.05em 0 #00fffc, 0.05em 0 0 #fc00ff,
+                    0 -0.05em 0 #fffc00;
+            }
+            100% {
+                text-shadow: -0.025em 0 0 #00fffc, -0.025em -0.025em 0 #fc00ff,
+                    -0.025em -0.05em 0 #fffc00;
+            }
+        }
+
+        .glitch {
+            animation: glitch 725ms infinite;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 8;
+            background: linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0) 0%,
+                rgba(255, 255, 255, 0.2) 10%,
+                rgba(0, 0, 0, 0.1) 100%
+            );
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 10s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% {
+                bottom: 100%;
+            }
+            80% {
+                bottom: 100%;
+            }
+            100% {
+                bottom: -100%;
+            }
+        }
+
+        #matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        body.light #console {
+            background-color: #ffffff;
+            border-color: var(--primary);
+            color: var(--text);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light #input-line {
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light #prompt,
+        body.light #command-input {
+            color: var(--text);
+        }
+
+        body.light .bg-gray-800 {
+            background-color: #ffffff;
+        }
+
+        body.light .text-green-500 {
+            color: var(--primary);
+        }
+
+        body.light .text-green-400 {
+            color: var(--text);
+        }
+
+        body.light .container {
+            background-color: var(--background);
+            border-radius: 20px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 1rem;
+            }
+            #console {
+                height: 60vh;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .container {
+                padding: 2rem;
+            }
+            #console {
+                height: 70vh;
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .container {
+                padding: 3rem;
+            }
+            #console {
+                height: 80vh;
+            }
+        }
+
+        /* Cute animals */
+        .cute-animal {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+        }
+
+        .cat {
+            animation: moveCat 20s infinite linear;
+        }
+
+        .dog {
+            animation: moveDog 25s infinite linear;
+        }
+
+        .rabbit {
+            animation: moveRabbit 22s infinite linear;
+        }
+
+        @keyframes moveCat {
+            0% { top: 0; left: 0; }
+            25% { top: 0; left: calc(100% - 24px); }
+            50% { top: calc(100% - 24px); left: calc(100% - 24px); }
+            75% { top: calc(100% - 24px); left: 0; }
+            100% { top: 0; left: 0; }
+        }
+
+        @keyframes moveDog {
+            0% { top: 0; right: 0; }
+            25% { top: calc(100% - 24px); right: 0; }
+            50% { top: calc(100% - 24px); right: calc(100% - 24px); }
+            75% { top: 0; right: calc(100% - 24px); }
+            100% { top: 0; right: 0; }
+        }
+
+        @keyframes moveRabbit {
+            0% { bottom: 0; left: 50%; }
+            25% { bottom: calc(100% - 24px); left: 25%; }
+            50% { bottom: 50%; left: 0; }
+            75% { bottom: calc(100% - 24px); left: 75%; }
+            100% { bottom: 0; left: 50%; }
+        }
+
+        /* Green checkmark animation */
+        @keyframes checkmark {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .checkmark {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            position: relative;
+            animation: checkmark 0.3s ease-in-out;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 6px;
+            border-left: 2px solid white;
+            border-bottom: 2px solid white;
+            transform: rotate(-45deg);
+            top: 6px;
+            left: 5px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-green-400">
+    <canvas id="matrix-rain"></canvas>
+    <div class="container mx-auto p-4 max-w-4xl relative">
+        <div class="cute-animal cat">🐱</div>
+        <div class="cute-animal dog">🐶</div>
+        <div class="cute-animal rabbit">🐰</div>
+        <div class="bg-gray-800 rounded-t-lg p-4 flex flex-col sm:flex-row items-center justify-between">
+            <div class="flex space-x-2 mb-4 sm:mb-0">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-500 glitch mb-4 sm:mb-0">Console | tanbaycu</h1>
+            <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-700 focus:outline-none transition-colors duration-200">
+                <i data-lucide="moon" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div id="console" class="bg-black border-2 border-green-500 rounded-b-lg overflow-y-auto p-4 mb-4 relative">
+            <div class="scanline"></div>
+        </div>
+        <div id="input-line" class="flex items-center bg-gray-800 rounded-lg p-2">
+            <span id="prompt" class="text-green-500 mr-2 text-lg">&gt;</span>
+            <input type="text" id="command-input" class="bg-transparent border-none flex-grow text-green-400 focus:outline-none text-lg" autofocus>
+            <button id="submit-btn" class="ml-2 p-2 rounded-full hover:bg-gray-700 focus:outline-none transition-colors duration-200">
+                <i data-lucide="send" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <audio id="keySound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
+
+    <script>
+        const console = document.getElementById('console');
+        const commandInput = document.getElementById('command-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const keySound = document.getElementById('keySound');
+        const themeToggle = document.getElementById('theme-toggle');
+
+        function playKeySound() {
+            keySound.currentTime = 0;
+            keySound.play();
+        }
+
+        function typeWriter(text, element, speed = 50) {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        function addToConsole(text, isCommand = false, showCheckmark = false) {
+            const line = document.createElement('div');
+            line.className = 'mb-2 flex items-center';
+            if (isCommand) {
+                line.innerHTML = `<span class="text-blue-400 mr-2">&gt; ${text}</span>`;
+                if (showCheckmark) {
+                    const checkmark = document.createElement('span');
+                    checkmark.className = 'checkmark';
+                    line.appendChild(checkmark);
+                }
+                console.appendChild(line);
+            } else {
+                const textSpan = document.createElement('span');
+                line.appendChild(textSpan);
+                console.appendChild(line);
+                typeWriter(text, textSpan);
+            }
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function processCommand(command) {
+            addToConsole(command, true, true);
+            let response;
+
+            switch(command.toLowerCase()) {
+                case 'hello':
+                    response = 'Greetings! Check out my <a href="https://github.com/tanbaycu" target="_blank" class="text-blue-400 hover:underline">Github</a>. Welcome to the Mega Ultra Cool Console! We hope you enjoy your stay in this digital wonderland. Feel free to explore and discover all the amazing features we have to offer!';
+                    break;
+                case 'date':
+                    response = 'Current stardate: ' + new Date().toLocaleDateString();
+                    break;
+                case 'time':
+                    response = 'Current time in the matrix: ' + new Date().toLocaleTimeString();
+                    break;
+                case 'help':
+                    response = 'Available commands: hello, date, time, clear, help, hack, matrix, joke, game, theme';
+                    break;
+                case 'clear':
+                    console.innerHTML = '';
+                    return;
+                case 'hack':
+                    response = 'Initiating advanced hack sequence... Firewalls breached! Mainframe access granted! You now control the entire cybersphere.';
+                    break;
+                case 'matrix':
+                    response = 'Activating the Matrix protocol... Reality is bending. Can you see the code now, Neo?';
+                    toggleMatrixRain();
+                    break;
+                case 'joke':
+                    const jokes = [
+                        "Why do programmers prefer dark mode? Because light attracts bugs!",
+                        "Why did the programmer quit his job? Because he didn't get arrays!",
+                        "Why do programmers always mix up Christmas and Halloween? Because Oct 31 == Dec 25!"
+                    ];
+                    response = jokes[Math.floor(Math.random() * jokes.length)];
+                    break;
+                case 'game':
+                    response = 'Launching mini-game... Get ready to test your hacking skills!';
+                    startGame();
+                    break;
+                case 'theme':
+                    toggleTheme();
+                    response = 'Theme toggled. How\'s that for a visual hack?';
+                    break;
+                default:
+                    response = `Command not recognized: ${command}. Are you even trying to hack? Type 'help' for available commands.`;
+            }
+
+            addToConsole(response);
+        }
+
+        function handleCommand() {
+            const command = commandInput.value.trim();
+            if (command) {
+                processCommand(command);
+                commandInput.value = '';
+            }
+        }
+
+        commandInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                handleCommand();
+            } else {
+                playKeySound();
+            }
+        });
+
+        submitBtn.addEventListener('click', handleCommand);
+
+        // Theme toggle
+        function toggleTheme() {
+            document.body.classList.toggle('light');
+            const moonIcon = themeToggle.querySelector('i');
+            if (document.body.classList.contains('light')) {
+                moonIcon.setAttribute('data-lucide', 'sun');
+            } else {
+                moonIcon.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+        }
+
+        themeToggle.addEventListener('click', toggleTheme);
+
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix-rain');
+        const ctx = canvas.getContext('2d');
+
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        const matrixArr = matrix.split("");
+
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrixRain() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#0F0";
+            ctx.font = fontSize + "px arial";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixArr[Math.floor(Math.random() * matrixArr.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        let matrixInterval;
+
+        function toggleMatrixRain() {
+            if (matrixInterval) {
+                clearInterval(matrixInterval);
+                matrixInterval = null;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            } else {
+                matrixInterval = setInterval(drawMatrixRain, 33);
+            }
+        }
+
+        // Mini-game
+        function startGame() {
+            let gameActive = true;
+            let score = 0;
+            const gameContainer = document.createElement('div');
+            gameContainer.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-75';
+            gameContainer.innerHTML = `
+                <div class="bg-gray-800 p-6 rounded-lg text-center">
+                    <h2 class="text-3xl mb-6 text-green-400">Hack the System!</h2>
+                    <p class="mb-6 text-xl">Score: <span id="game-score" class="font-bold">0</span></p>
+                    <div id="game-target" class="w-20 h-20 bg-red-500 rounded-full mx-auto mb-6 cursor-pointer transition-all duration-300 ease-in-out hover:bg-red-600"></div>
+                    <button id="end-game" class="bg-red-500 text-white px-6 py-3 rounded-full text-lg hover:bg-red-600 transition-colors duration-200">End Game</button>
+                </div>
+            `;
+            document.body.appendChild(gameContainer);
+
+            const target = document.getElementById('game-target');
+            const scoreElement = document.getElementById('game-score');
+            const endGameBtn = document.getElementById('end-game');
+
+            function moveTarget() {
+                if (!gameActive) return;
+                const maxX = gameContainer.clientWidth - target.clientWidth;
+                const maxY = gameContainer.clientHeight - target.clientHeight;
+                const newX = Math.random() * maxX;
+                const newY = Math.random() * maxY;
+                target.style.transform = `translate(${newX}px, ${newY}px)`;
+                setTimeout(moveTarget, 1000);
+            }
+
+            target.addEventListener('click', () => {
+                if (!gameActive) return;
+                score++;
+                scoreElement.textContent = score;
+                target.style.transform = 'scale(0.9)';
+                setTimeout(() => target.style.transform = 'scale(1)', 100);
+            });
+
+            endGameBtn.addEventListener('click', () => {
+                gameActive = false;
+                document.body.removeChild(gameContainer);
+                addToConsole(`Game over! Your final score: ${score}`);
+            });
+
+            moveTarget();
+        }
+
+        addToConsole('Welcome to the   tanbaycu Console! Type "help" for available commands. Prepare to hack the multiverse!');
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Responsive design
+        function adjustConsoleHeight() {
+            const windowHeight = window.innerHeight;
+            const consoleElement = document.getElementById('console');
+            if (windowHeight < 600) {
+                consoleElement.style.height = '50vh';
+            } else if (windowHeight < 900) {
+                consoleElement.style.height = '60vh';
+            } else {
+                consoleElement.style.height = '70vh';
+            }
+        }
+
+        window.addEventListener('resize', adjustConsoleHeight);
+        adjustConsoleHeight();
+    </script>
+</body>
+</html>
+

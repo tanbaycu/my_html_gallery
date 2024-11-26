@@ -1,0 +1,31 @@
+body {
+    background-color: rgb(19, 13, 54);
+}
+
+a:visited {
+    color: rgb(173, 24, 24);
+}
+
+a:hover {
+    color: rgb(83, 16, 16);
+}
+
+hr {
+    color:rgb(173, 24, 24)
+}
+
+li {
+    color: #bbb;
+}
+
+li:hover {
+    color: #fff
+}
+
+h1 {
+    color: #bbb;
+}
+
+h1:hover {
+    color: #fff
+}

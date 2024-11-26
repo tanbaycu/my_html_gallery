@@ -1,0 +1,13 @@
+.paragraph {
+    columns: 200px 2; /* 200px is the width of each column, 2 is the number of columns */
+    column-gap: 30px;
+    color: #fff;
+    padding: 25px;
+}
+
+.title {
+    color: #fff;
+    font-weight: bold;
+    column-span: all;
+    display: block;
+}

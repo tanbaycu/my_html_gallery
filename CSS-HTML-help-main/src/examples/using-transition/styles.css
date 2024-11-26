@@ -1,0 +1,15 @@
+.box {
+    height: 100px;
+    width: 100px;
+    background-color: yellow;
+    border: black 2px solid;
+    transition-duration: 0.5s;
+}
+
+.box:hover {
+    background-color: orange;
+}
+
+.box:active {
+    background-color: red;
+}

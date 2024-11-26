@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Console - tanbaycu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@400;600&display=swap');
+
+        :root {
+            --primary: #00ff00;
+            --secondary: #0000ff;
+            --background: #000000;
+            --text: #ffffff;
+        }
+
+        body {
+            transition: background-color 0.3s, color 0.3s;
+            font-family: 'Fira Code', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.light {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --background: #ecf0f1;
+            --text: #2c3e50;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        @keyframes glitch {
+            0%, 100% { text-shadow: -2px 0 #00fffc, 2px 2px #fc00ff; }
+            25% { text-shadow: 2px 0 #00fffc, -2px -2px #fc00ff; }
+            50% { text-shadow: -2px -2px #00fffc, 2px 2px #fc00ff; }
+            75% { text-shadow: 2px 2px #00fffc, -2px 0 #fc00ff; }
+        }
+
+        .glitch {
+            animation: glitch 0.5s infinite;
+        }
+
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 8;
+            background: linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0) 0%,
+                rgba(255, 255, 255, 0.2) 10%,
+                rgba(0, 0, 0, 0.1) 100%
+            );
+            opacity: 0.1;
+            position: absolute;
+            bottom: 100%;
+            animation: scanline 10s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            80% { bottom: 100%; }
+            100% { bottom: -100%; }
+        }
+
+        #matrix-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        body.light #console {
+            background-color: #ffffff;
+            border-color: var(--primary);
+            color: var(--text);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body.light #input-line {
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light #prompt,
+        body.light #command-input {
+            color: var(--text);
+        }
+
+        body.light .bg-gray-800 {
+            background-color: #ffffff;
+        }
+
+        body.light .text-green-500 {
+            color: var(--primary);
+        }
+
+        body.light .text-green-400 {
+            color: var(--text);
+        }
+
+        body.light .container {
+            background-color: var(--background);
+            border-radius: 20px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes checkmark {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .checkmark {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            position: relative;
+            animation: checkmark 0.3s ease-in-out;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 6px;
+            border-left: 2px solid white;
+            border-bottom: 2px solid white;
+            transform: rotate(-45deg);
+            top: 6px;
+            left: 5px;
+        }
+
+        #console {
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--background);
+        }
+
+        #console::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #console::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+
+        #console::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 4px;
+        }
+
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-left: 1px solid var(--primary);
+            padding: 20px;
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .settings-panel.active {
+            right: 0;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0.5rem;
+            }
+            #console {
+                height: calc(100vh - 180px);
+            }
+            .text-2xl {
+                font-size: 1.25rem;
+            }
+            .settings-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .container {
+                padding: 1rem;
+            }
+            #console {
+                height: calc(100vh - 190px);
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-green-400">
+    <canvas id="matrix-rain"></canvas>
+    <div class="container mx-auto p-4 max-w-4xl flex flex-col h-screen relative">
+        <div class="bg-gray-800 rounded-t-lg p-4 flex flex-col sm:flex-row items-center justify-between mb-4">
+            <div class="flex space-x-2 mb-4 sm:mb-0">
+                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-green-500 glitch mb-4 sm:mb-0">Console</h1>
+            <button id="settings-toggle" class="p-2 rounded-full hover:bg-gray-700 focus:outline-none transition-colors duration-200">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <div id="console" class="bg-black border-2 border-green-500 rounded-lg p-4 mb-4 flex-grow overflow-y-auto relative">
+            <div class="scanline"></div>
+        </div>
+        <div id="input-line" class="flex items-center bg-gray-800 rounded-lg p-2">
+            <span id="prompt" class="text-green-500 mr-2 text-lg">&gt;</span>
+            <input type="text" id="command-input" class="bg-transparent border-none flex-grow text-green-400 focus:outline-none text-lg" autofocus>
+            <button id="submit-btn" class="ml-2 p-2 rounded-full hover:bg-gray-700 focus:outline-none transition-colors duration-200">
+                <i data-lucide="send" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="settings-panel" class="settings-panel">
+        <h3 class="text-2xl font-semibold mb-6 text-green-500">Settings</h3>
+        <div class="mb-6 flex items-center justify-between">
+            <span class="text-sm font-medium text-green-400">Theme</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="mb-6">
+            <label for="font-size" class="block mb-2 text-sm font-medium text-green-400">Font Size</label>
+            <input type="range" id="font-size" min="12" max="24" value="16" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+            <span id="font-size-value" class="block mt-1 text-sm text-green-400">16px</span>
+        </div>
+        <div class="mb-6">
+            <label for="typing-speed" class="block mb-2 text-sm font-medium text-green-400">Typing Speed</label>
+            <input type="range" id="typing-speed" min="10" max="100" value="50" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+            <span id="typing-speed-value" class="block mt-1 text-sm text-green-400">50ms</span>
+        </div>
+        <div class="mb-6 flex items-center justify-between">
+            <span class="text-sm font-medium text-green-400">Sound</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="sound-toggle" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="mb-6 flex items-center justify-between">
+            <span class="text-sm font-medium text-green-400">Auto-complete</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="autocomplete-toggle" checked>
+                <span class="toggle-slider"></span>
+            </label>
+        </div>
+        <div class="mb-6">
+            <label for="custom-command" class="block mb-2 text-sm font-medium text-green-400">Add Custom Command</label>
+            <input type="text" id="custom-command" class="bg-gray-700 border border-gray-600 text-green-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Command name">
+            <input type="text" id="custom-command-response" class="mt-2 bg-gray-700 border border-gray-600 text-green-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder="Command response">
+            <button id="add-custom-command" class="mt-2 text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Add Command</button>
+        </div>
+        <div class="mb-6">
+            <button id="export-settings" class="w-full text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Export Settings</button>
+        </div>
+        <div class="mb-6">
+            <label for="import-settings" class="block mb-2 text-sm font-medium text-green-400">Import Settings</label>
+            <input type="file" id="import-settings" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-600 file:text-white hover:file:bg-green-700">
+        </div>
+    </div
+>
+
+    <div id="overlay" class="overlay"></div>
+
+    <audio id="keySound" src="https://www.soundjay.com/buttons/sounds/button-10.mp3" preload="auto"></audio>
+
+    <script>
+        const console = document.getElementById('console');
+        const commandInput = document.getElementById('command-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const keySound = document.getElementById('keySound');
+        const themeToggle = document.getElementById('theme-toggle');
+        const settingsToggle = document.getElementById('settings-toggle');
+        const settingsPanel = document.getElementById('settings-panel');
+        const overlay = document.getElementById('overlay');
+        const fontSizeSlider = document.getElementById('font-size');
+        const fontSizeValue = document.getElementById('font-size-value');
+        const typingSpeedSlider = document.getElementById('typing-speed');
+        const typingSpeedValue = document.getElementById('typing-speed-value');
+        const soundToggle = document.getElementById('sound-toggle');
+        const autocompleteToggle = document.getElementById('autocomplete-toggle');
+        const customCommandInput = document.getElementById('custom-command');
+        const customCommandResponse = document.getElementById('custom-command-response');
+        const addCustomCommandBtn = document.getElementById('add-custom-command');
+        const exportSettingsBtn = document.getElementById('export-settings');
+        const importSettingsInput = document.getElementById('import-settings');
+
+        let typingSpeed = 50;
+        let customCommands = {};
+
+        function playKeySound() {
+            if (soundToggle.checked) {
+                keySound.currentTime = 0;
+                keySound.play();
+            }
+        }
+
+        function typeWriter(text, element, speed = typingSpeed) {
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        function addToConsole(text, isCommand = false, showCheckmark = false) {
+            const line = document.createElement('div');
+            line.className = 'mb-2 flex items-center';
+            if (isCommand) {
+                line.innerHTML = `<span class="text-blue-400 mr-2">&gt; ${text}</span>`;
+                if (showCheckmark) {
+                    const checkmark = document.createElement('span');
+                    checkmark.className = 'checkmark';
+                    line.appendChild(checkmark);
+                }
+                console.appendChild(line);
+            } else {
+                const textSpan = document.createElement('span');
+                line.appendChild(textSpan);
+                console.appendChild(line);
+                typeWriter(text, textSpan);
+            }
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function processCommand(command) {
+            addToConsole(command, true, true);
+            let response;
+
+            if (customCommands[command.toLowerCase()]) {
+                response = customCommands[command.toLowerCase()];
+            } else {
+                switch(command.toLowerCase()) {
+                    case 'hello':
+                        response = 'Greetings! Check out my <a href="https://github.com/tanbaycu" target="_blank" class="text-blue-400 hover:underline">Github</a>. Welcome to the Advanced Console! We hope you enjoy your stay in this digital wonderland. Feel free to explore and discover all the amazing features we have to offer!';
+                        break;
+                    case 'date':
+                        response = 'Current stardate: ' + new Date().toLocaleDateString();
+                        break;
+                    case 'time':
+                        response = 'Current time in the matrix: ' + new Date().toLocaleTimeString();
+                        break;
+                    case 'help':
+                        response = 'Available commands: hello, date, time, clear, help, hack, matrix, joke, game, theme, settings';
+                        if (Object.keys(customCommands).length > 0) {
+                            response += ', ' + Object.keys(customCommands).join(', ');
+                        }
+                        break;
+                    case 'clear':
+                        console.innerHTML = '';
+                        return;
+                    case 'hack':
+                        response = 'Initiating advanced hack sequence... Firewalls breached! Mainframe access granted! You now control the entire cybersphere.';
+                        break;
+                    case 'matrix':
+                        response = 'Activating the Matrix protocol... Reality is bending. Can you see the code now, Neo?';
+                        toggleMatrixRain();
+                        break;
+                    case 'joke':
+                        const jokes = [
+                            "Why do programmers prefer dark mode? Because light attracts bugs!",
+                            "Why did the programmer quit his job? Because he didn't get arrays!",
+                            "Why do programmers always mix up Christmas and Halloween? Because Oct 31 == Dec 25!"
+                        ];
+                        response = jokes[Math.floor(Math.random() * jokes.length)];
+                        break;
+                    case 'game':
+                        response = 'Launching mini-game... Get ready to test your hacking skills!';
+                        startGame();
+                        break;
+                    case 'theme':
+                        toggleTheme();
+                        response = 'Theme toggled. How\'s that for a visual hack?';
+                        break;
+                    case 'settings':
+                        toggleSettings();
+                        response = 'Settings panel toggled. Customize your console experience!';
+                        break;
+                    default:
+                        response = `Command not recognized: ${command}. Are you even trying to hack? Type 'help' for available commands.`;
+                }
+            }
+
+            addToConsole(response);
+        }
+
+        function handleCommand() {
+            const command = commandInput.value.trim();
+            if (command) {
+                processCommand(command);
+                commandInput.value = '';
+            }
+        }
+
+        commandInput.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                handleCommand();
+            } else {
+                playKeySound();
+                if (autocompleteToggle.checked) {
+                    autocomplete(this.value);
+                }
+            }
+        });
+
+        submitBtn.addEventListener('click', handleCommand);
+
+        function toggleTheme() {
+            document.body.classList.toggle('light');
+            themeToggle.checked = document.body.classList.contains('light');
+        }
+
+        themeToggle.addEventListener('change', toggleTheme);
+
+        function toggleSettings() {
+            settingsPanel.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        settingsToggle.addEventListener('click', toggleSettings);
+        overlay.addEventListener('click', toggleSettings);
+
+        fontSizeSlider.addEventListener('input', function() {
+            console.style.fontSize = this.value + 'px';
+            fontSizeValue.textContent = this.value + 'px';
+        });
+
+        typingSpeedSlider.addEventListener('input', function() {
+            typingSpeed = 110 - this.value;
+            typingSpeedValue.textContent = this.value + 'ms';
+        });
+
+        addCustomCommandBtn.addEventListener('click', function() {
+            const command = customCommandInput.value.trim().toLowerCase();
+            const response = customCommandResponse.value.trim();
+            if (command && response) {
+                customCommands[command] = response;
+                customCommandInput.value = '';
+                customCommandResponse.value = '';
+                addToConsole(`Custom command "${command}" added successfully.`);
+            }
+        });
+
+        function autocomplete(input) {
+            const commands = ['hello', 'date', 'time', 'help', 'clear', 'hack', 'matrix', 'joke', 'game', 'theme', 'settings', ...Object.keys(customCommands)];
+            const matches = commands.filter(cmd => cmd.startsWith(input.toLowerCase()));
+            if (matches.length === 1) {
+                commandInput.value = matches[0];
+            }
+        }
+
+        exportSettingsBtn.addEventListener('click', function() {
+            const settings = {
+                theme: document.body.classList.contains('light'),
+                fontSize: fontSizeSlider.value,
+                typingSpeed: typingSpeedSlider.value,
+                sound: soundToggle.checked,
+                autocomplete: autocompleteToggle.checked,
+                customCommands: customCommands
+            };
+            const blob = new Blob([JSON.stringify(settings)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'console-settings.json';
+            a.click();
+        });
+
+        importSettingsInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const settings = JSON.parse(e.target.result);
+                    document.body.classList.toggle('light', settings.theme);
+                    themeToggle.checked = settings.theme;
+                    fontSizeSlider.value = settings.fontSize;
+                    console.style.fontSize = settings.fontSize + 'px';
+                    fontSizeValue.textContent = settings.fontSize + 'px';
+                    typingSpeedSlider.value = settings.typingSpeed;
+                    typingSpeed = 110 - settings.typingSpeed;
+                    typingSpeedValue.textContent = settings.typingSpeed + 'ms';
+                    soundToggle.checked = settings.sound;
+                    autocompleteToggle.checked = settings.autocomplete;
+                    customCommands = settings.customCommands;
+                    addToConsole('Settings imported successfully.');
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        const canvas = document.getElementById('matrix-rain');
+        const ctx = canvas.getContext('2d');
+
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        const matrixArr = matrix.split("");
+
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
+        }
+
+        function drawMatrixRain() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#0F0";
+            ctx.font = fontSize + "px arial";
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrixArr[Math.floor(Math.random() * matrixArr.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        let matrixInterval;
+
+        function toggleMatrixRain() {
+            if (matrixInterval) {
+                clearInterval(matrixInterval);
+                matrixInterval = null;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            } else {
+                matrixInterval = setInterval(drawMatrixRain, 33);
+            }
+        }
+
+        function startGame() {
+            let gameActive = true;
+            let score = 0;
+            const gameContainer = document.createElement('div');
+            gameContainer.className = 'fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50';
+            gameContainer.innerHTML = `
+                <div class="bg-gray-800 p-6 rounded-lg text-center">
+                    <h2 class="text-3xl mb-6 text-green-400">Hack the System!</h2>
+                    <p class="mb-6 text-xl">Score: <span id="game-score" class="font-bold">0</span></p>
+                    <div id="game-target" class="w-20 h-20 bg-red-500 rounded-full mx-auto mb-6 cursor-pointer transition-all duration-300 ease-in-out hover:bg-red-600"></div>
+                    <button id="end-game" class="bg-red-500 text-white px-6 py-3 rounded-full text-lg hover:bg-red-600 transition-colors duration-200">End Game</button>
+                </div>
+            `;
+            document.body.appendChild(gameContainer);
+
+            const target = document.getElementById('game-target');
+            const scoreElement = document.getElementById('game-score');
+            const endGameBtn = document.getElementById('end-game');
+
+            function moveTarget() {
+                if (!gameActive) return;
+                const maxX = gameContainer.clientWidth - target.clientWidth;
+                const maxY = gameContainer.clientHeight - target.clientHeight;
+                const newX = Math.random() * maxX;
+                const newY = Math.random() * maxY;
+                target.style.transform = `translate(${newX}px, ${newY}px)`;
+                setTimeout(moveTarget, 1000);
+            }
+
+            target.addEventListener('click', () => {
+                if (!gameActive) return;
+                score++;
+                scoreElement.textContent = score;
+                target.style.transform = 'scale(0.9)';
+                setTimeout(() => target.style.transform = 'scale(1)', 100);
+            });
+
+            endGameBtn.addEventListener('click', () => {
+                gameActive = false;
+                document.body.removeChild(gameContainer);
+                addToConsole(`Game over! Your final score: ${score}`);
+            });
+
+            moveTarget();
+        }
+
+        addToConsole('Welcome to the Advanced tanbaycu Console! Type "help" for available commands. Prepare to hack the multiverse!');
+
+        lucide.createIcons();
+
+        function adjustLayout() {
+            const windowHeight = window.innerHeight;
+            const consoleElement = document.getElementById('console');
+            const containerElement = document.querySelector('.container');
+            const headerHeight = document.querySelector('.bg-gray-800').offsetHeight;
+            const inputLineHeight = document.getElementById('input-line').offsetHeight;
+            const padding = parseInt(getComputedStyle(containerElement).padding) * 2;
+            
+            consoleElement.style.height = `${windowHeight - headerHeight - inputLineHeight - padding}px`;
+        }
+
+        window.addEventListener('resize', adjustLayout);
+        adjustLayout();
+    </script>
+</body>
+</html>
+

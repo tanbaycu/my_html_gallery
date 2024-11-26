@@ -1,0 +1,19 @@
+.radio-text input[type="radio"] {
+    display: none;
+}
+  
+.radio-text label {
+    display: inline-block;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+  
+.radio-text label:hover {
+    border-color: #999;
+}
+
+.radio-text input[type="radio"]:checked + label {
+    border: red;
+}
